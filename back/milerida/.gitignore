@@ -1,0 +1,29 @@
+# Compilado Binario
+/bin/
+
+# Dependencias
+/vendor/
+
+# Directorios de salida
+/dist
+
+# Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de IDEs/Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de la Go build
+*.o
+*.a
+*.so
+
+# Archivos de Log
+*.log
+
+# Archivos de variables de entorno
+.env

@@ -1,0 +1,58 @@
+linters-settings:
+  # Options for analysis running.
+  run:
+    # Timeout for analysis, e.g. 30s, 5m.
+    # Default: 1m
+    timeout: 5m
+  errcheck:
+    exclude-functions:
+      - (net/http.ResponseWriter).Write
+  misspell:
+    locale: US
+    ignore-words:
+      - producto
+      - identificacion
+      - transaccion
+      - descripcion
+      - promocional
+      - autorizacion
+      - indicativo
+      - licence
+      - participantes
+      - problemas
+      - momento
+      - informativo
+      - respondas
+      - columnas
+      - politicas
+      - proteccion
+      - clientes
+      - calcular
+      - administrar
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - experimental
+      - opinionated
+  stylecheck:
+    go: "1.17"
+    checks: ["all"]
+  gosec:
+    exclude-generated: true
+    severity: low
+    confidence: medium
+linters:
+  enable:
+    - errcheck
+    - misspell
+    - gocritic
+    - stylecheck
+    - gosec
+issues:
+  exclude:
+    - composites
+    - composite
+    - G107
+    - G115
