@@ -53,3 +53,14 @@ func (r *UsersRepository) ListUsers() ([]dtos.UserDTO, error) {
 	}
 	return mappers.MapToUserDTOs(users), nil
 }
+
+func (r *UsersRepository) UserExistsByEmail(email string) (bool, error) {
+	var user models.Users
+	if err := r.dbConnection.GetDB().Where("email = ?", email).First(&user).Error; err != nil {
+		if err.Error() == "record not found" {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}

@@ -16,7 +16,3 @@ type UserUseCase struct {
 func New(repo ports.IUserRepository) IUserUseCase {
 	return &UserUseCase{repo: repo}
 }
-
-func (u *UserUseCase) CreateUser(userDTO *dtos.UserDTO) error {
-	return u.repo.CreateUser(userDTO)
-}
