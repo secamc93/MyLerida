@@ -1,9 +1,9 @@
 package postgres
 
 import (
+	"auth/pkg/env"
+	"auth/pkg/logger"
 	"fmt"
-	"my-lerida/pkg/env"
-	"my-lerida/pkg/logger"
 	"sync"
 	"time"
 
@@ -29,7 +29,7 @@ var (
 	log      = logger.NewLogger()
 )
 
-func NewDBConnection() DBConnection {
+func New() DBConnection {
 	once.Do(func() {
 		instance = &dbConnection{}
 	})

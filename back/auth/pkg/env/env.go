@@ -1,7 +1,7 @@
 package env
 
 import (
-	"my-lerida/pkg/logger"
+	"auth/pkg/logger"
 	"os"
 
 	"github.com/joho/godotenv"
