@@ -64,3 +64,17 @@ func (r *UsersRepository) UserExistsByEmail(email string) (bool, error) {
 	}
 	return true, nil
 }
+func (r *UsersRepository) GetPasswordByEmail(email string) (string, error) {
+	var user models.Users
+	if err := r.dbConnection.GetDB().Where("email = ?", email).First(&user).Error; err != nil {
+		return "", err
+	}
+	return user.Password, nil
+}
+func (r *UsersRepository) GetUserByEmail(email string) (*dtos.UserDTO, error) {
+	var user models.Users
+	if err := r.dbConnection.GetDB().Where("email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return mappers.MapToUserDTO(&user), nil
+}

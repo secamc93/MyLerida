@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  request.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   request.UserRequest:
     properties:
       email:
@@ -24,6 +31,40 @@ info:
   description: Documentación de la API de AUTH.
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns an access token
+      parameters:
+      - description: Login request payload
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: User login
+      tags:
+      - auth
   /users:
     post:
       consumes:
@@ -45,6 +86,10 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/response.BaseResponse'
         "500":

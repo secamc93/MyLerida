@@ -9,4 +9,6 @@ type IUserRepository interface {
 	GetUserByID(id uint) (*dtos.UserDTO, error)
 	ListUsers() ([]dtos.UserDTO, error)
 	UserExistsByEmail(email string) (bool, error)
+	GetPasswordByEmail(email string) (string, error)
+	GetUserByEmail(email string) (*dtos.UserDTO, error)
 }

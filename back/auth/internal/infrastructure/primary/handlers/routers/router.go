@@ -7,6 +7,7 @@ import (
 	"auth/internal/infrastructure/secondary/postgres/repository"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -14,6 +15,15 @@ import (
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
+
+	// Configurar CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	dbConnection := postgres.New()
 	userRepo := repository.New(dbConnection)
@@ -28,6 +38,7 @@ func SetupRouter() *gin.Engine {
 	{
 		handler := userHandler.New(userUseCase)
 		api.POST("/users", handler.CreateUser)
+		api.POST("/login", handler.Login) // Nueva ruta de login
 	}
 
 	// Ruta para acceder a Swagger

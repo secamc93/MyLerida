@@ -7,6 +7,7 @@ import (
 
 type IUserUseCase interface {
 	CreateUser(userDTO *dtos.UserDTO) error
+	Login(email, password string) (string, error)
 }
 
 type UserUseCase struct {
