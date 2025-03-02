@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"auth/internal/domain/user/errors"
-	"auth/internal/infrastructure/primary/handlers/request"
-	"auth/internal/infrastructure/primary/handlers/response"
+	"auth/internal/infrastructure/primary/handlers/dtos/request"
+	"auth/internal/infrastructure/primary/handlers/dtos/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

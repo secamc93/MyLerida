@@ -15,5 +15,5 @@ func Migrate() {
 	if err != nil {
 		log.Fatal("Failed to migrate database: " + err.Error())
 	}
-	log.Success("Database migrated")
+	log.Info("Database migrated")
 }

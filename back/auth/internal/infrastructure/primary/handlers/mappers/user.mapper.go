@@ -2,7 +2,7 @@ package mappers
 
 import (
 	"auth/internal/domain/user/dtos"
-	"auth/internal/infrastructure/primary/handlers/request"
+	"auth/internal/infrastructure/primary/handlers/dtos/request"
 )
 
 func MapToUserDTO(userRequest request.UserRequest) dtos.UserDTO {

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,13 +32,23 @@ func RunServer() {
 	}
 
 	address := fmt.Sprintf(":%s", port)
-	log.Success("Server running on port %s", port)
-	log.Success("Swagger documentation available at http://localhost%s/swagger/index.html", address)
+	log.Info("Server running on port %s", port)
+
+	coloredURL := formatSwaggerURL(address)
+	log.Info("Documentacion swagger:\n\n%s\n", coloredURL)
 
 	setupSwagger(port)
-
 	server := setupServer(address, log)
 	startServer(server, log)
+}
+
+func formatSwaggerURL(address string) string {
+	realURL := fmt.Sprintf("http://localhost%s/swagger/index.html", address)
+	const width = 80
+	leftPad := (width - len(realURL)) / 2
+	centeredURL := fmt.Sprintf("%s%s", strings.Repeat(" ", leftPad), realURL)
+	coloredURL := fmt.Sprintf("\033[32m%s\033[0m", centeredURL)
+	return coloredURL
 }
 
 func setupDatabase() postgres.DBConnection {
@@ -90,5 +101,5 @@ func startServer(server *http.Server, log logger.ILogger) {
 		log.Fatal("Server forced to shutdown: %v", err)
 	}
 
-	log.Success("Server exiting")
+	log.Info("Server exiting")
 }

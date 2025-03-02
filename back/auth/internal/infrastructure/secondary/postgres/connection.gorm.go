@@ -59,22 +59,26 @@ func (conn *dbConnection) connect() error {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 		envVars.DBHost, envVars.DBPort, envVars.DBUser, envVars.DBName, envVars.DBPassword)
 
-	var logLevel gormLogger.LogLevel
+	var gormLevel gormLogger.LogLevel
 	switch envVars.DBLogMode {
 	case "silent":
-		logLevel = gormLogger.Silent
+		gormLevel = gormLogger.Silent
 	case "error":
-		logLevel = gormLogger.Error
+		gormLevel = gormLogger.Error
 	case "warn":
-		logLevel = gormLogger.Warn
+		gormLevel = gormLogger.Warn
 	case "info":
-		logLevel = gormLogger.Info
+		gormLevel = gormLogger.Info
+	case "debug":
+		gormLevel = gormLogger.Info
 	default:
-		logLevel = gormLogger.Silent
+		gormLevel = gormLogger.Silent
 	}
 
+	// Se utiliza el logger personalizado que integra Zerolog.
+	customGormLogger := logger.NewGormLogger(log, gormLevel)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: gormLogger.Default.LogMode(logLevel),
+		Logger: customGormLogger,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to connect database: %w", err)
@@ -90,7 +94,7 @@ func (conn *dbConnection) connect() error {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	conn.db = db
-	log.Success("Database connection established")
+	log.Info("Database connection established")
 	return nil
 }
 

@@ -3,11 +3,11 @@ package logger
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
-	"path/filepath"
 	"runtime"
-	"strings"
+	"time"
+
+	"github.com/rs/zerolog"
 )
 
 type LogLevel int
@@ -15,7 +15,6 @@ type LogLevel int
 const (
 	DEBUG LogLevel = iota
 	INFO
-	SUCCESS
 	WARN
 	ERROR
 	FATAL
@@ -24,7 +23,6 @@ const (
 type ILogger interface {
 	Debug(msg string, params ...interface{})
 	Info(msg string, params ...interface{})
-	Success(msg string, params ...interface{})
 	Warn(msg string, params ...interface{})
 	Error(msg string, params ...interface{})
 	Fatal(msg string, params ...interface{})
@@ -33,100 +31,81 @@ type ILogger interface {
 	Writer() io.Writer
 }
 
-type logger struct {
-	colorReset  string
-	colorCyan   string
-	colorRed    string
-	colorYellow string
-	colorGreen  string
-	logLevel    LogLevel
-	output      io.Writer
+// zerologLogger es una implementación de ILogger usando Zerolog.
+type zerologLogger struct {
+	logger zerolog.Logger
 }
 
+// NewLogger retorna una instancia de ILogger basada en Zerolog.
 func NewLogger() ILogger {
-	return &logger{
-		colorReset:  "\033[0m",
-		colorCyan:   "\033[36m",
-		colorRed:    "\033[31m",
-		colorYellow: "\033[33m",
-		colorGreen:  "\033[32m",
-		logLevel:    INFO,
-		output:      os.Stdout,
+	// Utilizamos ConsoleWriter para una salida legible en consola.
+	writer := zerolog.ConsoleWriter{
+		Out:        os.Stdout,
+		TimeFormat: time.RFC3339,
 	}
-}
-
-func (l *logger) log(level LogLevel, color, msg string, params ...interface{}) {
-	if level < l.logLevel {
-		return
-	}
-
-	_, file, line, _ := runtime.Caller(2)
-	filename := filepath.Base(file)
-
-	var origin string
-	if filename == "db.go" {
-		origin = fmt.Sprintf("[config.ConnectDB:%d]", line)
+	// Se quita la llamada a Caller para que no aparezca en todos los logs.
+	zl := zerolog.New(writer).With().Timestamp().Logger()
+	// Ajuste: configurar el nivel global según DB_LOG_MODE
+	if os.Getenv("DB_LOG_MODE") == "debug" {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	} else {
-		origin = fmt.Sprintf("[%s:%d]", strings.TrimSuffix(filename, filepath.Ext(filename)), line)
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
-
-	logMsg := fmt.Sprintf("[%s] %s [%s]", level.String(), origin, fmt.Sprintf(msg, params...))
-	log.SetOutput(l.output)
-	log.Printf("%s%s%s", color, logMsg, l.colorReset)
+	return &zerologLogger{logger: zl}
 }
 
-func (l *logger) Debug(msg string, params ...interface{}) {
-	l.log(DEBUG, l.colorCyan, msg, params...)
+func (z *zerologLogger) Debug(msg string, params ...interface{}) {
+	z.logger.Debug().Msgf(msg, params...)
 }
 
-func (l *logger) Info(msg string, params ...interface{}) {
-	l.log(INFO, l.colorCyan, msg, params...)
+func (z *zerologLogger) Info(msg string, params ...interface{}) {
+	z.logger.Info().Msgf(msg, params...)
 }
 
-func (l *logger) Success(msg string, params ...interface{}) {
-	l.log(SUCCESS, l.colorGreen, msg, params...)
+func (z *zerologLogger) Warn(msg string, params ...interface{}) {
+	z.logger.Warn().Msgf(msg, params...)
 }
 
-func (l *logger) Warn(msg string, params ...interface{}) {
-	l.log(WARN, l.colorYellow, msg, params...)
+func (z *zerologLogger) Error(msg string, params ...interface{}) {
+	// Obtener la ubicación real de la llamada
+	_, file, line, ok := runtime.Caller(2)
+	caller := ""
+	if ok {
+		caller = fmt.Sprintf("%s:%d", file, line)
+	}
+	// Se añade el campo "caller" al log para indicar la ubicación
+	z.logger.Error().Str("caller", caller).Msgf(msg, params...)
 }
 
-func (l *logger) Error(msg string, params ...interface{}) {
-	l.log(ERROR, l.colorRed, msg, params...)
+func (z *zerologLogger) Fatal(msg string, params ...interface{}) {
+	z.logger.Fatal().Msgf(msg, params...)
 }
 
-func (l *logger) Fatal(msg string, params ...interface{}) {
-	l.log(FATAL, l.colorRed, msg, params...)
-	log.Panicf("[%s]", fmt.Sprintf(msg, params...))
+func (z *zerologLogger) SetOutput(w io.Writer) {
+	z.logger = z.logger.Output(w)
 }
 
-func (l *logger) SetOutput(w io.Writer) {
-	l.output = w
-}
-
-func (l *logger) SetLogLevel(level LogLevel) {
-	l.logLevel = level
-}
-
-func (l *logger) Writer() io.Writer {
-	return l.output
-}
-
-func (level LogLevel) String() string {
+func (z *zerologLogger) SetLogLevel(level LogLevel) {
+	// Mapear nuestros niveles personalizados a los de Zerolog.
+	var zLevel zerolog.Level
 	switch level {
 	case DEBUG:
-		return "DEBU"
+		zLevel = zerolog.DebugLevel
 	case INFO:
-		return "INFO"
-	case SUCCESS:
-		return "SUCC"
+		zLevel = zerolog.InfoLevel
 	case WARN:
-		return "WARN"
+		zLevel = zerolog.WarnLevel
 	case ERROR:
-		return "ERRO"
+		zLevel = zerolog.ErrorLevel
 	case FATAL:
-		return "FATA"
+		zLevel = zerolog.FatalLevel
 	default:
-		return "UNKN"
+		zLevel = zerolog.InfoLevel
 	}
+	zerolog.SetGlobalLevel(zLevel)
+}
+
+func (z *zerologLogger) Writer() io.Writer {
+	// Zerolog no expone un Writer directamente, por lo que devolvemos os.Stdout (o podrías almacenar el writer configurado).
+	return os.Stdout
 }

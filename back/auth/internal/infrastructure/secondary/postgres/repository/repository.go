@@ -6,8 +6,11 @@ import (
 	"auth/internal/infrastructure/secondary/postgres"
 	"auth/internal/infrastructure/secondary/postgres/mappers"
 	"auth/internal/infrastructure/secondary/postgres/models"
+	"auth/pkg/logger"
 	"sync"
 )
+
+var log = logger.NewLogger()
 
 type IUserRepository interface {
 	CreateUser(user *models.Users) error
@@ -66,14 +69,15 @@ func (r *UsersRepository) UserExistsByEmail(email string) (bool, error) {
 }
 func (r *UsersRepository) GetPasswordByEmail(email string) (string, error) {
 	var user models.Users
-	if err := r.dbConnection.GetDB().Where("email = ?", email).First(&user).Error; err != nil {
+	if err := r.dbConnection.GetDB().Debug().Where("email = ?", email).First(&user).Error; err != nil {
+
 		return "", err
 	}
 	return user.Password, nil
 }
 func (r *UsersRepository) GetUserByEmail(email string) (*dtos.UserDTO, error) {
 	var user models.Users
-	if err := r.dbConnection.GetDB().Where("email = ?", email).First(&user).Error; err != nil {
+	if err := r.dbConnection.GetDB().Debug().Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return mappers.MapToUserDTO(&user), nil
