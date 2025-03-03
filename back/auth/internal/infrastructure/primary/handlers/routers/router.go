@@ -1,9 +1,13 @@
 package routers
 
 import (
+	"auth/internal/application/usecase/usecaserole"
 	"auth/internal/application/usecase/usecaseuser"
-	userHandler "auth/internal/infrastructure/primary/handlers"
-	"auth/internal/infrastructure/secondary/postgres"
+
+	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers"
+	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/handlers"
+	"auth/internal/infrastructure/primary/handlers/middleware"
+	"auth/internal/infrastructure/secondary/postgres/connectpostgres"
 	"auth/internal/infrastructure/secondary/postgres/repository"
 	"auth/pkg/logger"
 	"os"
@@ -12,8 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-
-	"auth/internal/infrastructure/primary/handlers/middleware"
 )
 
 func SetupRouter() *gin.Engine {
@@ -31,9 +33,14 @@ func SetupRouter() *gin.Engine {
 		AllowCredentials: true,
 	}))
 
-	dbConnection := postgres.New()
-	userRepo := repository.New(dbConnection)
+	dbConnection := connectpostgres.New()
+
+	repo := repository.New(dbConnection)
+	userRepo := repo.NewUserRepository()
+	roleRepo := repo.NewRoleRepository()
+
 	userUseCase := usecaseuser.New(userRepo)
+	roleUseCase := usecaserole.New(roleRepo)
 
 	urlBase := os.Getenv("URL_BASE")
 	if urlBase == "" {
@@ -42,11 +49,20 @@ func SetupRouter() *gin.Engine {
 
 	api := router.Group(urlBase)
 	{
-		handler := userHandler.New(userUseCase)
+		// Rutas de usuarios
+		handler := handlers.New(userUseCase)
 		api.POST("/users", handler.CreateUser)
+		api.GET("/users", handler.GetUsers)
+		api.GET("/users/:id", handler.GetUser)
+		api.PUT("/users/:id", handler.UpdateUser)
+		api.DELETE("/users/:id", handler.DeleteUser)
 		api.POST("/login", handler.Login)
+
+		// Registrar rutas de roles
+		rolehandlers.RegisterRoutes(api, roleUseCase)
 	}
 
+	// Configuración de Swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router

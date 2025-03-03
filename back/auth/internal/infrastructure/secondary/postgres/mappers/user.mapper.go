@@ -9,8 +9,7 @@ func MapToUserDTO(user *models.Users) *dtos.UserDTO {
 	return &dtos.UserDTO{
 		ID:       user.ID,
 		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
+		LastName: user.LastName,
 	}
 }
 
@@ -25,6 +24,7 @@ func MapToUserDTOs(users []models.Users) []dtos.UserDTO {
 func MapToUserModel(userDTO *dtos.UserDTO) *models.Users {
 	return &models.Users{
 		Name:     userDTO.Name,
+		LastName: userDTO.LastName,
 		Email:    userDTO.Email,
 		Password: userDTO.Password,
 	}

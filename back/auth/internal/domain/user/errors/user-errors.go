@@ -11,4 +11,5 @@ var (
 	ErrUserNotFound       = errors.New("usuario no encontrado")
 	ErrInvalidPassword    = errors.New("contraseña inválida")
 	ErrJWTSecretNotSet    = errors.New("JWT secret no configurado")
+	ErrNoUsersFound       = errors.New("no se encontraron usuarios")
 )

@@ -9,7 +9,7 @@ import (
 )
 
 func (u *UserUseCase) CreateUser(userDTO *dtos.UserDTO) error {
-	// Verificar si el email, nombre y contraseña no están vacíos
+
 	if userDTO.Email == "" {
 		return errors.ErrEmailEmpty
 	}
@@ -20,7 +20,6 @@ func (u *UserUseCase) CreateUser(userDTO *dtos.UserDTO) error {
 		return errors.ErrPasswordEmpty
 	}
 
-	// Verificar si el email ya existe
 	exists, err := u.repo.UserExistsByEmail(userDTO.Email)
 	if err != nil {
 		return err
@@ -29,17 +28,18 @@ func (u *UserUseCase) CreateUser(userDTO *dtos.UserDTO) error {
 		return errors.ErrEmailAlreadyExists
 	}
 
-	// Validar la contraseña
 	if !isValidPassword(userDTO.Password) {
 		return errors.ErrPasswordInvalid
 	}
 
-	// Cifrar la contraseña
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userDTO.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 	userDTO.Password = string(hashedPassword)
+
+	userDTO.Name = capitalizeWords(userDTO.Name)
+	userDTO.LastName = capitalizeWords(userDTO.LastName)
 
 	return u.repo.CreateUser(userDTO)
 }

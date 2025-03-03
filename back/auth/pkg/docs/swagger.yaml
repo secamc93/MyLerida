@@ -1,5 +1,28 @@
 basePath: /api
 definitions:
+  request.CreateRoleRequest:
+    properties:
+      description:
+        description: |-
+          Descripción del rol
+          example: Rol con todos los permisos del sistema
+        type: string
+      name:
+        description: |-
+          Nombre del rol
+          required: true
+          example: Administrador
+        type: string
+      permissions:
+        description: |-
+          IDs de los permisos asociados al rol
+          example: [1, 2, 3]
+        items:
+          type: integer
+        type: array
+    required:
+    - name
+    type: object
   request.LoginRequest:
     properties:
       email:
@@ -7,24 +30,99 @@ definitions:
       password:
         type: string
     type: object
+  request.UpdateRoleRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          type: integer
+        type: array
+    required:
+    - name
+    type: object
   request.UserRequest:
     properties:
       email:
         type: string
-      id:
-        type: integer
+      last_name:
+        type: string
       name:
         type: string
       password:
         type: string
     type: object
+  request.UserUpdateRequest:
+    properties:
+      email:
+        type: string
+      last_name:
+        type: string
+      name:
+        type: string
+    type: object
   response.BaseResponse:
     properties:
-      data: {}
       message:
         type: string
       statusCode:
         type: integer
+    type: object
+  response.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      user_id:
+        type: integer
+      user_last_name:
+        type: string
+      user_name:
+        type: string
+    type: object
+  response.Module:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.Permission:
+    properties:
+      id:
+        type: integer
+      module:
+        $ref: '#/definitions/response.Module'
+      name:
+        type: string
+    type: object
+  response.RoleListResponse:
+    properties:
+      roles:
+        items:
+          $ref: '#/definitions/response.RoleResponse'
+        type: array
+    type: object
+  response.RoleResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/response.Permission'
+        type: array
+    type: object
+  response.UserResponse:
+    properties:
+      id:
+        type: integer
+      last_name:
+        type: string
+      name:
+        type: string
     type: object
 info:
   contact: {}
@@ -46,12 +144,223 @@ paths:
       produces:
       - application/json
       responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: Login
+      tags:
+      - Login
+  /roles:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene una lista de todos los roles disponibles en el sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de roles
+          schema:
+            $ref: '#/definitions/response.RoleListResponse'
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Listar todos los roles
+      tags:
+      - roles
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo rol en el sistema
+      parameters:
+      - description: Datos del rol
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Rol creado
+          schema:
+            $ref: '#/definitions/response.RoleResponse'
+        "400":
+          description: Error en los datos de solicitud
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Ya existe un rol con ese nombre
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Crear un nuevo rol
+      tags:
+      - roles
+  /roles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Elimina un rol específico por su ID
+      parameters:
+      - description: ID del rol
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mensaje de éxito
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID de rol inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Rol no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Eliminar un rol
+      tags:
+      - roles
+    get:
+      consumes:
+      - application/json
+      description: Obtiene la información de un rol específico por su ID
+      parameters:
+      - description: ID del rol
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Información del rol
+          schema:
+            $ref: '#/definitions/response.RoleResponse'
+        "400":
+          description: ID de rol inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Rol no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Obtener un rol por ID
+      tags:
+      - roles
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un rol existente
+      parameters:
+      - description: ID del rol
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Datos actualizados del rol
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rol actualizado
+          schema:
+            $ref: '#/definitions/response.RoleResponse'
+        "400":
+          description: Datos de solicitud inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Rol no encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Ya existe un rol con ese nombre
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Error interno del servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Actualizar un rol
+      tags:
+      - roles
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Devuelve una lista de todos los usuarios registrados
+      produces:
+      - application/json
+      responses:
         "201":
           description: Created
           schema:
             $ref: '#/definitions/response.BaseResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/response.BaseResponse'
         "409":
@@ -62,10 +371,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.BaseResponse'
-      summary: User login
+      summary: Obtiene la lista de usuarios
       tags:
-      - auth
-  /users:
+      - Users
     post:
       consumes:
       - application/json
@@ -98,5 +406,114 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: Create a new user
       tags:
-      - users
+      - Users
+  /users/{id}:
+    delete:
+      description: Elimina un usuario por su ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: Elimina un usuario
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Devuelve un usuario específico basado en su ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: Obtiene un usuario por su ID
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Actualiza los datos de un usuario por su ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User update payload
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: Actualiza un usuario
+      tags:
+      - Users
 swagger: "2.0"

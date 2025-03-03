@@ -1,6 +1,7 @@
 package usecaseuser
 
 import (
+	"auth/internal/domain/user/dtos"
 	"auth/internal/domain/user/errors"
 	"auth/pkg/env"
 	"time"
@@ -9,23 +10,31 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (uc *UserUseCase) Login(email, password string) (string, error) {
+func (uc *UserUseCase) Login(email, password string) (dtos.LoginResponseDTO, error) {
+	var response dtos.LoginResponseDTO
 	user, err := uc.repo.GetUserByEmail(email)
 	if err != nil {
-		return "", errors.ErrUserNotFound
+		return response, errors.ErrUserNotFound
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return "", errors.ErrInvalidPassword
+		return response, errors.ErrInvalidPassword
 	}
 
 	token, err := generateJWT(user.Email)
 	if err != nil {
-		return "", err
+		return response, err
 	}
 
-	return token, nil
+	response = dtos.LoginResponseDTO{
+		Token:        token,
+		UserId:       user.ID,
+		UserName:     user.Name,
+		UserLastName: user.LastName,
+	}
+
+	return response, nil
 }
 
 func generateJWT(email string) (string, error) {

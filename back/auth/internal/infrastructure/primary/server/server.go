@@ -2,7 +2,7 @@ package server
 
 import (
 	"auth/internal/infrastructure/primary/handlers/routers"
-	"auth/internal/infrastructure/secondary/postgres"
+	"auth/internal/infrastructure/secondary/postgres/connectpostgres"
 	"auth/internal/infrastructure/secondary/postgres/migrate"
 	"auth/pkg/docs"
 	"auth/pkg/env"
@@ -51,12 +51,12 @@ func formatSwaggerURL(address string) string {
 	return coloredURL
 }
 
-func setupDatabase() postgres.DBConnection {
-	dbConn := postgres.New()
+func setupDatabase() connectpostgres.DBConnection {
+	dbConn := connectpostgres.New()
 	return dbConn
 }
 
-func closeDatabase(dbConn postgres.DBConnection, log logger.ILogger) {
+func closeDatabase(dbConn connectpostgres.DBConnection, log logger.ILogger) {
 	if err := dbConn.CloseDB(); err != nil {
 		log.Error("Error closing DB: %v", err)
 	}
