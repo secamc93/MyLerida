@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/role/errors"
+	"auth/internal/domain/role/roleerrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers/mappers"
 	"net/http"
 	"strconv"
@@ -35,7 +35,7 @@ func (h *RoleHandler) GetRole(c *gin.Context) {
 	role, err := h.usecase.GetRoleByID(uint(id))
 	if err != nil {
 		h.log.Error("Error al obtener rol: %v", err)
-		if err == errors.ErrRoleNotFound {
+		if err == roleerrors.ErrRoleNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Rol no encontrado"})
 			return
 		}

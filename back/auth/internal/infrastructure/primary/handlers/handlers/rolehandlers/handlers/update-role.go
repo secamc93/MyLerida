@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/role/errors"
+	"auth/internal/domain/role/roleerrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers/dtos/request"
 	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers/mappers"
 	"net/http"
@@ -48,11 +48,11 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	updatedRole, err := h.usecase.UpdateRole(uint(id), roleDTO)
 	if err != nil {
 		h.log.Error("Error al actualizar rol: %v", err)
-		if err == errors.ErrRoleNotFound {
+		if err == roleerrors.ErrRoleNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Rol no encontrado"})
 			return
 		}
-		if err == errors.ErrRoleAlreadyExists {
+		if err == roleerrors.ErrRoleAlreadyExists {
 			c.JSON(http.StatusConflict, gin.H{"error": "Ya existe un rol con ese nombre"})
 			return
 		}

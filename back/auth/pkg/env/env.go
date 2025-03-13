@@ -16,6 +16,7 @@ type Env struct {
 	ServerPort string
 	DBLogMode  string
 	JwtSecret  string
+	BaseUrl    string
 }
 
 func LoadEnv() *Env {
@@ -36,6 +37,7 @@ func LoadEnv() *Env {
 		ServerPort: getEnv("SERVER_PORT", log),
 		DBLogMode:  getEnv("DB_LOG_MODE", log),
 		JwtSecret:  getEnv("JWT_SECRET", log),
+		BaseUrl:    getEnv("BASE_URL", log),
 	}
 
 	return env

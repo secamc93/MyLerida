@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/role/errors"
+	"auth/internal/domain/role/roleerrors"
 	"net/http"
 	"strconv"
 
@@ -34,7 +34,7 @@ func (h *RoleHandler) DeleteRole(c *gin.Context) {
 	err = h.usecase.DeleteRole(uint(id))
 	if err != nil {
 		h.log.Error("Error al eliminar rol: %v", err)
-		if err == errors.ErrRoleNotFound {
+		if err == roleerrors.ErrRoleNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Rol no encontrado"})
 			return
 		}

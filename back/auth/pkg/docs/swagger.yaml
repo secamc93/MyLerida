@@ -1,22 +1,40 @@
 basePath: /api
 definitions:
+  handlers.ModulesResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/permissionsdtos.ModuleDTO'
+        type: array
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  permissionsdtos.ModuleDTO:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  request.CreatePermissionRequest:
+    properties:
+      module_id:
+        type: integer
+      name:
+        type: string
+    required:
+    - module_id
+    - name
+    type: object
   request.CreateRoleRequest:
     properties:
       description:
-        description: |-
-          Descripción del rol
-          example: Rol con todos los permisos del sistema
         type: string
       name:
-        description: |-
-          Nombre del rol
-          required: true
-          example: Administrador
         type: string
       permissions:
-        description: |-
-          IDs de los permisos asociados al rol
-          example: [1, 2, 3]
         items:
           type: integer
         type: array
@@ -159,6 +177,62 @@ paths:
       summary: Login
       tags:
       - Login
+  /permissions/create:
+    post:
+      consumes:
+      - application/json
+      description: Crea un permiso usando los datos provistos en el request
+      parameters:
+      - description: Datos para crear permiso
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreatePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Crea un nuevo permiso
+      tags:
+      - permissions
+  /permissions/modules:
+    get:
+      description: Retorna un listado de módulos envuelto en un objeto de respuesta
+        estándar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ModulesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Obtener todos los módulos
+      tags:
+      - Modulos
   /roles:
     get:
       consumes:

@@ -1,16 +1,17 @@
 package routers
 
 import (
+	"auth/internal/application/usecase/usecasepermissions"
 	"auth/internal/application/usecase/usecaserole"
 	"auth/internal/application/usecase/usecaseuser"
 
-	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers"
-	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/handlers"
+	"auth/internal/infrastructure/primary/handlers/handlers/permissionshandlers/permissionsroutes"
+	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers/roleroutes"
+	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/userroutes"
 	"auth/internal/infrastructure/primary/handlers/middleware"
 	"auth/internal/infrastructure/secondary/postgres/connectpostgres"
 	"auth/internal/infrastructure/secondary/postgres/repository"
 	"auth/pkg/logger"
-	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -38,31 +39,19 @@ func SetupRouter() *gin.Engine {
 	repo := repository.New(dbConnection)
 	userRepo := repo.NewUserRepository()
 	roleRepo := repo.NewRoleRepository()
+	permissionRepo := repo.NewPermissionRepository()
 
 	userUseCase := usecaseuser.New(userRepo)
 	roleUseCase := usecaserole.New(roleRepo)
+	permissionsUseCase := usecasepermissions.New(permissionRepo)
 
-	urlBase := os.Getenv("URL_BASE")
-	if urlBase == "" {
-		urlBase = "/api"
-	}
-
-	api := router.Group(urlBase)
+	api := router.Group("/api")
 	{
-		// Rutas de usuarios
-		handler := handlers.New(userUseCase)
-		api.POST("/users", handler.CreateUser)
-		api.GET("/users", handler.GetUsers)
-		api.GET("/users/:id", handler.GetUser)
-		api.PUT("/users/:id", handler.UpdateUser)
-		api.DELETE("/users/:id", handler.DeleteUser)
-		api.POST("/login", handler.Login)
-
-		// Registrar rutas de roles
-		rolehandlers.RegisterRoutes(api, roleUseCase)
+		userroutes.RegisterRoutes(api, userUseCase)
+		permissionsroutes.RegisterRoutes(api, permissionsUseCase)
+		roleroutes.RegisterRoutes(api, roleUseCase)
 	}
 
-	// Configuración de Swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router

@@ -61,6 +61,90 @@ const docTemplate = `{
                 }
             }
         },
+        "/permissions/create": {
+            "post": {
+                "description": "Crea un permiso usando los datos provistos en el request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "permissions"
+                ],
+                "summary": "Crea un nuevo permiso",
+                "parameters": [
+                    {
+                        "description": "Datos para crear permiso",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreatePermissionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions/modules": {
+            "get": {
+                "description": "Retorna un listado de módulos envuelto en un objeto de respuesta estándar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Modulos"
+                ],
+                "summary": "Obtener todos los módulos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ModulesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/roles": {
             "get": {
                 "security": [
@@ -604,6 +688,49 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handlers.ModulesResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/permissionsdtos.ModuleDTO"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "permissionsdtos.ModuleDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreatePermissionRequest": {
+            "type": "object",
+            "required": [
+                "module_id",
+                "name"
+            ],
+            "properties": {
+                "module_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CreateRoleRequest": {
             "type": "object",
             "required": [
@@ -611,15 +738,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "description": "Descripción del rol\nexample: Rol con todos los permisos del sistema",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Nombre del rol\nrequired: true\nexample: Administrador",
                     "type": "string"
                 },
                 "permissions": {
-                    "description": "IDs de los permisos asociados al rol\nexample: [1, 2, 3]",
                     "type": "array",
                     "items": {
                         "type": "integer"

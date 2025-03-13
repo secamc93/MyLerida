@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"auth/internal/domain/permissions/permissionsports"
 	"auth/internal/domain/role/ports"
 	userPorts "auth/internal/domain/user/ports"
 	"auth/internal/infrastructure/secondary/postgres/connectpostgres"
@@ -35,5 +36,9 @@ func (r *Repository) NewUserRepository() userPorts.IUserRepository {
 }
 
 func (r *Repository) NewRoleRepository() ports.IRoleRepository {
+	return r
+}
+
+func (r *Repository) NewPermissionRepository() permissionsports.IPermissionsRepository {
 	return r
 }

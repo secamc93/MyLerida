@@ -29,10 +29,7 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 		return
 	}
 
-	// Convertir la solicitud al DTO del dominio usando el mapper
 	roleDTO := mappers.MapCreateRequestToRoleDTO(&req)
-
-	// Llamar al caso de uso
 	createdRole, err := h.usecase.CreateRole(roleDTO)
 	if err != nil {
 		h.log.Error("Error al crear rol: %v", err)
@@ -40,7 +37,6 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 		return
 	}
 
-	// Crear la respuesta utilizando el mapper
 	resp := mappers.MapRoleDTOToResponse(createdRole)
 
 	c.JSON(http.StatusCreated, resp)

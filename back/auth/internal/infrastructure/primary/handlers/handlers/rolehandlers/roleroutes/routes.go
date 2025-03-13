@@ -1,4 +1,4 @@
-package rolehandlers
+package roleroutes
 
 import (
 	"auth/internal/application/usecase/usecaserole"
