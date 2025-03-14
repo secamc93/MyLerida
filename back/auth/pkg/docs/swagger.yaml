@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  globalerrors.BaseResponse:
+    properties:
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
   handlers.ModulesResponse:
     properties:
       data:
@@ -17,16 +24,6 @@ definitions:
         type: integer
       name:
         type: string
-    type: object
-  request.CreatePermissionRequest:
-    properties:
-      module_id:
-        type: integer
-      name:
-        type: string
-    required:
-    - module_id
-    - name
     type: object
   request.CreateRoleRequest:
     properties:
@@ -108,12 +105,41 @@ definitions:
     type: object
   response.Permission:
     properties:
+      delete:
+        type: boolean
       id:
         type: integer
       module:
         $ref: '#/definitions/response.Module'
-      name:
+      read:
+        type: boolean
+      update:
+        type: boolean
+      write:
+        type: boolean
+    type: object
+  response.PermissionResponse:
+    properties:
+      businesses_id:
+        type: integer
+      businesses_name:
         type: string
+      delete:
+        type: boolean
+      read:
+        type: boolean
+      role:
+        type: string
+      role_id:
+        type: integer
+      update:
+        type: boolean
+      user_id:
+        type: integer
+      user_name:
+        type: string
+      write:
+        type: boolean
     type: object
   response.RoleListResponse:
     properties:
@@ -177,42 +203,43 @@ paths:
       summary: Login
       tags:
       - Login
-  /permissions/create:
-    post:
+  /permission:
+    get:
       consumes:
       - application/json
-      description: Crea un permiso usando los datos provistos en el request
+      description: Extracts the business ID and user ID from the request headers,
+        then fetches associated permissions.
       parameters:
-      - description: Datos para crear permiso
-        in: body
-        name: request
+      - description: Business ID
+        in: header
+        name: businesses_id
         required: true
-        schema:
-          $ref: '#/definitions/request.CreatePermissionRequest'
+        type: string
+      - description: User ID
+        in: header
+        name: user_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: List of permissions
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            items:
+              $ref: '#/definitions/response.PermissionResponse'
+            type: array
         "400":
-          description: Bad Request
+          description: Header conversion error or missing required header
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/globalerrors.BaseResponse'
         "500":
-          description: Internal Server Error
+          description: Error retrieving permissions
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Crea un nuevo permiso
+            $ref: '#/definitions/globalerrors.BaseResponse'
+      summary: Retrieve permissions for a business and user
       tags:
-      - permissions
+      - Permissions
   /permissions/modules:
     get:
       description: Retorna un listado de módulos envuelto en un objeto de respuesta

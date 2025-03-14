@@ -17,8 +17,11 @@ func MapToRoleDTO(role *models.Role) *dtos.RoleDTO {
 		permissions := make([]dtos.PermissionDTO, len(role.Permissions))
 		for i, perm := range role.Permissions {
 			permissions[i] = dtos.PermissionDTO{
-				ID:   perm.ID,
-				Name: perm.Name,
+				ID:     perm.ID,
+				Write:  perm.Write,
+				Read:   perm.Read,
+				Update: perm.Update,
+				Delete: perm.Delete,
 				Module: dtos.ModuleDTO{
 					ID:   perm.Module.ID,
 					Name: perm.Module.Name,

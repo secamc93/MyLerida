@@ -21,8 +21,11 @@ func MapRoleDTOToResponse(roleDTO *dtos.RoleDTO) *response.RoleResponse {
 		permissions := make([]response.Permission, len(roleDTO.Permissions))
 		for i, p := range roleDTO.Permissions {
 			permissions[i] = response.Permission{
-				ID:   p.ID,
-				Name: p.Name,
+				ID:     p.ID,
+				Write:  p.Write,
+				Read:   p.Read,
+				Update: p.Update,
+				Delete: p.Delete,
 				Module: response.Module{
 					ID:   p.Module.ID,
 					Name: p.Module.Name,

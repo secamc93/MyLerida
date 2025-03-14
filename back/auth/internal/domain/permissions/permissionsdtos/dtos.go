@@ -1,9 +1,16 @@
 package permissionsdtos
 
 type PermissionDTO struct {
-	ID       uint
-	ModuleID uint
-	Name     string
+	BusinessesID   uint
+	BusinessesName string
+	UserID         uint
+	UserName       string
+	RoleID         uint
+	Role           string
+	Write          bool
+	Read           bool
+	Delete         bool
+	Update         bool
 }
 
 type ModuleDTO struct {

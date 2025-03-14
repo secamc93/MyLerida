@@ -2,7 +2,10 @@ package response
 
 type Permission struct {
 	ID     uint   `json:"id"`
-	Name   string `json:"name"`
+	Write  bool   `json:"write"`
+	Read   bool   `json:"read"`
+	Update bool   `json:"update"`
+	Delete bool   `json:"delete"`
 	Module Module `json:"module"`
 }
 

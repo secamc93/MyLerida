@@ -10,7 +10,10 @@ type Module struct {
 
 type Permission struct {
 	gorm.Model
-	Name     string `gorm:"type:varchar(100);not null"`
+	Write    bool
+	Read     bool
+	Update   bool
+	Delete   bool
 	ModuleID uint
 	Module   Module `gorm:"foreignKey:ModuleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Roles    []Role `gorm:"many2many:role_permissions;"`

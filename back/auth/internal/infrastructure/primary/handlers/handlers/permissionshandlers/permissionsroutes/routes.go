@@ -9,9 +9,9 @@ import (
 
 func RegisterRoutes(r *gin.RouterGroup, peromossionsUseCase usecasepermissions.IPermissionsUseCase) {
 	handler := handlers.New(peromossionsUseCase)
-	permissionsRoutes := r.Group("/permissions")
+	permissionsRoutes := r.Group("/permission")
 	{
 		permissionsRoutes.GET("/modules", handler.GetModules)
-		permissionsRoutes.POST("/create", handler.CreatePermission)
+		permissionsRoutes.GET("", handler.GetPermission)
 	}
 }

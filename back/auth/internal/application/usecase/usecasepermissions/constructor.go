@@ -4,14 +4,12 @@ import (
 	"auth/internal/domain/permissions/permissionsdtos"
 	"auth/internal/domain/permissions/permissionsports"
 	"auth/pkg/logger"
+	"context"
 )
 
 type IPermissionsUseCase interface {
-	CreatePermission(dto *permissionsdtos.PermissionDTO) (*permissionsdtos.PermissionDTO, error)
-	GetPermissionByID(id uint) (*permissionsdtos.PermissionDTO, error)
-	UpdatePermission(id uint, dto *permissionsdtos.PermissionDTO) (*permissionsdtos.PermissionDTO, error)
-	DeletePermission(id uint) error
 	GetModules() ([]permissionsdtos.ModuleDTO, error)
+	GetPermissionByBussinesAndUser(ctx context.Context, bussinesID uint, userID uint) (*[]permissionsdtos.PermissionDTO, error)
 }
 
 type PermissionsUseCase struct {

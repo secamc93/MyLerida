@@ -61,9 +61,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/permissions/create": {
-            "post": {
-                "description": "Crea un permiso usando los datos provistos en el request",
+        "/permission": {
+            "get": {
+                "description": "Extracts the business ID and user ID from the request headers, then fetches associated permissions.",
                 "consumes": [
                     "application/json"
                 ],
@@ -71,46 +71,45 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "permissions"
+                    "Permissions"
                 ],
-                "summary": "Crea un nuevo permiso",
+                "summary": "Retrieve permissions for a business and user",
                 "parameters": [
                     {
-                        "description": "Datos para crear permiso",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.CreatePermissionRequest"
-                        }
+                        "type": "string",
+                        "description": "Business ID",
+                        "name": "businesses_id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "List of permissions",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.PermissionResponse"
                             }
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Header conversion error or missing required header",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/globalerrors.BaseResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Error retrieving permissions",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/globalerrors.BaseResponse"
                         }
                     }
                 }
@@ -688,6 +687,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "globalerrors.BaseResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                }
+            }
+        },
         "handlers.ModulesResponse": {
             "type": "object",
             "properties": {
@@ -709,21 +719,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.CreatePermissionRequest": {
-            "type": "object",
-            "required": [
-                "module_id",
-                "name"
-            ],
-            "properties": {
-                "module_id": {
                     "type": "integer"
                 },
                 "name": {
@@ -855,14 +850,58 @@ const docTemplate = `{
         "response.Permission": {
             "type": "object",
             "properties": {
+                "delete": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "module": {
                     "$ref": "#/definitions/response.Module"
                 },
-                "name": {
+                "read": {
+                    "type": "boolean"
+                },
+                "update": {
+                    "type": "boolean"
+                },
+                "write": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.PermissionResponse": {
+            "type": "object",
+            "properties": {
+                "businesses_id": {
+                    "type": "integer"
+                },
+                "businesses_name": {
                     "type": "string"
+                },
+                "delete": {
+                    "type": "boolean"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "update": {
+                    "type": "boolean"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "write": {
+                    "type": "boolean"
                 }
             }
         },

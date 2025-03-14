@@ -8,8 +8,11 @@ type RoleDTO struct {
 
 type PermissionDTO struct {
 	ID     uint
-	Name   string
 	Module ModuleDTO
+	Write  bool
+	Read   bool
+	Update bool
+	Delete bool
 }
 
 type ModuleDTO struct {
