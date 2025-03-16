@@ -1,14 +1,14 @@
 package usecaseuser
 
 import (
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/usererrors"
 )
 
 func (u *UserUseCase) DeleteUser(id uint) error {
-	user, err := u.repo.GetUserByID(id)
+	user, err := u.repoUser.GetUserByID(id)
 	if err != nil || user == nil {
-		return errors.ErrUserNotFound
+		return usererrors.ErrUserNotFound
 	}
 
-	return u.repo.DeleteUser(id)
+	return u.repoUser.DeleteUser(id)
 }

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/usererrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/request"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/response"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/mappers"
@@ -47,9 +47,9 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 func (h *UserHandler) handleCreateUserError(c *gin.Context, err error) {
 	var statusCode int
 	switch err {
-	case errors.ErrEmailEmpty, errors.ErrNameEmpty, errors.ErrPasswordEmpty, errors.ErrPasswordInvalid:
+	case usererrors.ErrEmailEmpty, usererrors.ErrNameEmpty, usererrors.ErrPasswordEmpty, usererrors.ErrPasswordInvalid:
 		statusCode = http.StatusBadRequest
-	case errors.ErrEmailAlreadyExists:
+	case usererrors.ErrEmailAlreadyExists:
 		statusCode = http.StatusConflict
 	default:
 		statusCode = http.StatusInternalServerError

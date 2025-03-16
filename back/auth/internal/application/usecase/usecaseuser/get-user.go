@@ -1,17 +1,17 @@
 package usecaseuser
 
 import (
-	"auth/internal/domain/user/dtos"
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/userdtos"
+	"auth/internal/domain/user/usererrors"
 )
 
-func (u *UserUseCase) GetUserByID(id uint) (*dtos.UserDTO, error) {
-	user, err := u.repo.GetUserByID(id)
+func (u *UserUseCase) GetUserByID(id uint) (*userdtos.UserDTO, error) {
+	user, err := u.repoUser.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}
 	if user == nil {
-		return nil, errors.ErrUserNotFound
+		return nil, usererrors.ErrUserNotFound
 	}
 	return user, nil
 }

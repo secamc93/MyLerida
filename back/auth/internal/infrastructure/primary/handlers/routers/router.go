@@ -41,7 +41,7 @@ func SetupRouter() *gin.Engine {
 	roleRepo := repo.NewRoleRepository()
 	permissionRepo := repo.NewPermissionRepository()
 
-	userUseCase := usecaseuser.New(userRepo)
+	userUseCase := usecaseuser.New(userRepo, permissionRepo)
 	roleUseCase := usecaserole.New(roleRepo)
 	permissionsUseCase := usecasepermissions.New(permissionRepo)
 

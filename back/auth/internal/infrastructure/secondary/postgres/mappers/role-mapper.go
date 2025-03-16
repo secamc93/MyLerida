@@ -1,28 +1,28 @@
 package mappers
 
 import (
-	"auth/internal/domain/role/dtos"
+	"auth/internal/domain/role/roledtos"
 	"auth/internal/infrastructure/secondary/postgres/models"
 )
 
 // MapToRoleDTO convierte un modelo Role a un DTO
-func MapToRoleDTO(role *models.Role) *dtos.RoleDTO {
-	roleDTO := &dtos.RoleDTO{
+func MapToRoleDTO(role *models.Role) *roledtos.RoleDTO {
+	roleDTO := &roledtos.RoleDTO{
 		ID:   role.ID,
 		Name: role.Name,
 	}
 
 	// Mapeamos los permisos si existen
 	if len(role.Permissions) > 0 {
-		permissions := make([]dtos.PermissionDTO, len(role.Permissions))
+		permissions := make([]roledtos.PermissionDTO, len(role.Permissions))
 		for i, perm := range role.Permissions {
-			permissions[i] = dtos.PermissionDTO{
+			permissions[i] = roledtos.PermissionDTO{
 				ID:     perm.ID,
 				Write:  perm.Write,
 				Read:   perm.Read,
 				Update: perm.Update,
 				Delete: perm.Delete,
-				Module: dtos.ModuleDTO{
+				Module: roledtos.ModuleDTO{
 					ID:   perm.Module.ID,
 					Name: perm.Module.Name,
 				},
@@ -35,8 +35,8 @@ func MapToRoleDTO(role *models.Role) *dtos.RoleDTO {
 }
 
 // MapToRoleDTOs convierte una slice de modelos Role a una slice de DTOs
-func MapToRoleDTOs(roles []models.Role) []dtos.RoleDTO {
-	roleDTOs := make([]dtos.RoleDTO, len(roles))
+func MapToRoleDTOs(roles []models.Role) []roledtos.RoleDTO {
+	roleDTOs := make([]roledtos.RoleDTO, len(roles))
 	for i, role := range roles {
 		roleDTOs[i] = *MapToRoleDTO(&role)
 	}
@@ -44,7 +44,7 @@ func MapToRoleDTOs(roles []models.Role) []dtos.RoleDTO {
 }
 
 // MapToRoleModel convierte un DTO Role a un modelo
-func MapToRoleModel(roleDTO *dtos.RoleDTO) *models.Role {
+func MapToRoleModel(roleDTO *roledtos.RoleDTO) *models.Role {
 	if roleDTO == nil {
 		return nil
 	}

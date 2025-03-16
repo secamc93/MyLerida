@@ -1,12 +1,12 @@
 package repository
 
 import (
-	"auth/internal/domain/role/dtos"
+	"auth/internal/domain/role/roledtos"
 	"auth/internal/infrastructure/secondary/postgres/mappers"
 	"auth/internal/infrastructure/secondary/postgres/models"
 )
 
-func (r *Repository) GetRoleByID(id uint) (*dtos.RoleDTO, error) {
+func (r *Repository) GetRoleByID(id uint) (*roledtos.RoleDTO, error) {
 	var role models.Role
 	if err := r.dbConnection.GetDB().Preload("Permissions.Module").First(&role, id).Error; err != nil {
 		return nil, err
@@ -15,7 +15,7 @@ func (r *Repository) GetRoleByID(id uint) (*dtos.RoleDTO, error) {
 	return roleDTO, nil
 }
 
-func (r *Repository) ListRoles() ([]dtos.RoleDTO, error) {
+func (r *Repository) ListRoles() ([]roledtos.RoleDTO, error) {
 	var roles []models.Role
 	if err := r.dbConnection.GetDB().Preload("Permissions.Module").Find(&roles).Error; err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (r *Repository) ListRoles() ([]dtos.RoleDTO, error) {
 	return roleDTOs, nil
 }
 
-func (r *Repository) CreateRole(roleDTO *dtos.RoleDTO) error {
+func (r *Repository) CreateRole(roleDTO *roledtos.RoleDTO) error {
 	role := mappers.MapToRoleModel(roleDTO)
 	return r.dbConnection.GetDB().Create(role).Error
 }
@@ -35,7 +35,7 @@ func (r *Repository) DeleteRole(id uint) error {
 	return r.dbConnection.GetDB().Delete(&role).Error
 }
 
-func (r *Repository) UpdateRole(id uint, roleDTO *dtos.RoleDTO) error {
+func (r *Repository) UpdateRole(id uint, roleDTO *roledtos.RoleDTO) error {
 	role := mappers.MapToRoleModel(roleDTO)
 	r.log.Info("Updating role with ID: %d", id)
 	if err := r.dbConnection.GetDB().
@@ -47,7 +47,7 @@ func (r *Repository) UpdateRole(id uint, roleDTO *dtos.RoleDTO) error {
 	return nil
 }
 
-func (r *Repository) GetRoleByName(name string) (*dtos.RoleDTO, error) {
+func (r *Repository) GetRoleByName(name string) (*roledtos.RoleDTO, error) {
 	var role models.Role
 	if err := r.dbConnection.GetDB().Preload("Permissions.Module").Where("name = ?", name).First(&role).Error; err != nil {
 		return nil, err

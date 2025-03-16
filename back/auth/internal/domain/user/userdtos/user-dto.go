@@ -1,4 +1,4 @@
-package dtos
+package userdtos
 
 type UserDTO struct {
 	ID       uint

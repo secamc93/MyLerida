@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/usererrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/response"
 	"net/http"
 	"strconv"
@@ -35,7 +35,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 	if err := h.useCase.DeleteUser(uint(id)); err != nil {
 		statusCode := http.StatusInternalServerError
 		switch err {
-		case errors.ErrUserNotFound:
+		case usererrors.ErrUserNotFound:
 			statusCode = http.StatusNotFound
 		}
 		c.JSON(statusCode, response.BaseResponse{

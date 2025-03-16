@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/usererrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/response"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/mappers"
 	"net/http"
@@ -24,7 +24,7 @@ import (
 func (h *UserHandler) GetUsers(c *gin.Context) {
 	users, err := h.useCase.ListUsers()
 	if err != nil {
-		if err == errors.ErrNoUsersFound {
+		if err == usererrors.ErrNoUsersFound {
 			c.JSON(http.StatusNotFound, response.BaseResponse{
 				StatusCode: http.StatusNotFound,
 				Message:    err.Error(),

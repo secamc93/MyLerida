@@ -1,12 +1,12 @@
 package usecaserole
 
 import (
-	"auth/internal/domain/role/dtos"
+	"auth/internal/domain/role/roledtos"
 	"auth/internal/domain/role/roleerrors"
 	"fmt"
 )
 
-func (u *RoleUseCase) GetRoleByID(id uint) (*dtos.RoleDTO, error) {
+func (u *RoleUseCase) GetRoleByID(id uint) (*roledtos.RoleDTO, error) {
 	if id == 0 {
 		return nil, fmt.Errorf("el ID del rol no puede ser cero")
 	}

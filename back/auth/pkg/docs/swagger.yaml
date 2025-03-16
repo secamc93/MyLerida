@@ -173,36 +173,6 @@ info:
   description: Documentación de la API de AUTH.
   version: "1.0"
 paths:
-  /login:
-    post:
-      consumes:
-      - application/json
-      description: Authenticates a user and returns an access token
-      parameters:
-      - description: Login request payload
-        in: body
-        name: loginRequest
-        required: true
-        schema:
-          $ref: '#/definitions/request.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.LoginResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.BaseResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.BaseResponse'
-      summary: Login
-      tags:
-      - Login
   /permission:
     get:
       consumes:
@@ -617,4 +587,34 @@ paths:
       summary: Actualiza un usuario
       tags:
       - Users
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns an access token
+      parameters:
+      - description: Login request payload
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: Login
+      tags:
+      - Login
 swagger: "2.0"

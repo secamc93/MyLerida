@@ -2,8 +2,8 @@ package repository
 
 import (
 	"auth/internal/domain/permissions/permissionsports"
-	"auth/internal/domain/role/ports"
-	userPorts "auth/internal/domain/user/ports"
+	"auth/internal/domain/role/roleports"
+	"auth/internal/domain/user/userports"
 	"auth/internal/infrastructure/secondary/postgres/connectpostgres"
 	"auth/pkg/logger"
 	"sync"
@@ -31,11 +31,11 @@ func New(db connectpostgres.DBConnection) *Repository {
 	return instance
 }
 
-func (r *Repository) NewUserRepository() userPorts.IUserRepository {
+func (r *Repository) NewUserRepository() userports.IUserRepository {
 	return r
 }
 
-func (r *Repository) NewRoleRepository() ports.IRoleRepository {
+func (r *Repository) NewRoleRepository() roleports.IRoleRepository {
 	return r
 }
 

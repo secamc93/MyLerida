@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/usererrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/response"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/mappers"
 	"net/http"
@@ -36,7 +36,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	user, err := h.useCase.GetUserByID(uint(id))
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if err == errors.ErrUserNotFound {
+		if err == usererrors.ErrUserNotFound {
 			statusCode = http.StatusNotFound
 		}
 		c.JSON(statusCode, response.BaseResponse{

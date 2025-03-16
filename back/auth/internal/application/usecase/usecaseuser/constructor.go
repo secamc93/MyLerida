@@ -1,28 +1,35 @@
 package usecaseuser
 
 import (
-	"auth/internal/domain/user/dtos"
-	"auth/internal/domain/user/ports"
+	"auth/internal/domain/permissions/permissionsports"
+	"auth/internal/domain/user/userdtos"
+	"auth/internal/domain/user/userports"
 	"auth/pkg/logger"
+	"context"
 )
 
 type IUserUseCase interface {
-	CreateUser(userDTO *dtos.UserDTO) error
-	Login(email, password string) (dtos.LoginResponseDTO, error)
-	ListUsers() ([]dtos.UserDTO, error)
+	CreateUser(userDTO *userdtos.UserDTO) error
+	Login(ctx context.Context, email, password string) (userdtos.LoginResponseDTO, error)
+	ListUsers() ([]userdtos.UserDTO, error)
 	DeleteUser(id uint) error
-	UpdateUser(id uint, updatedDTO *dtos.UserDTO) error
-	GetUserByID(id uint) (*dtos.UserDTO, error)
+	UpdateUser(id uint, updatedDTO *userdtos.UserDTO) error
+	GetUserByID(id uint) (*userdtos.UserDTO, error)
 }
 
 type UserUseCase struct {
-	repo ports.IUserRepository
-	log  logger.ILogger
+	repoUser        userports.IUserRepository
+	repoPermissions permissionsports.IPermissionsRepository
+	log             logger.ILogger
 }
 
-func New(repo ports.IUserRepository) IUserUseCase {
+func New(
+	repoUser userports.IUserRepository,
+	repoPermissions permissionsports.IPermissionsRepository,
+) IUserUseCase {
 	return &UserUseCase{
-		repo: repo,
-		log:  logger.NewLogger(),
+		repoUser:        repoUser,
+		repoPermissions: repoPermissions,
+		log:             logger.NewLogger(),
 	}
 }

@@ -1,27 +1,27 @@
 package usecaserole
 
 import (
-	"auth/internal/domain/role/dtos"
-	"auth/internal/domain/role/ports"
+	"auth/internal/domain/role/roledtos"
+	"auth/internal/domain/role/roleports"
 	"auth/pkg/logger"
 )
 
 // IRoleUseCase define la interfaz para todos los casos de uso relacionados con roles
 type IRoleUseCase interface {
-	CreateRole(roleDTO *dtos.RoleDTO) (*dtos.RoleDTO, error)
-	GetRoleByID(id uint) (*dtos.RoleDTO, error)
-	ListRoles() ([]dtos.RoleDTO, error)
+	CreateRole(roleDTO *roledtos.RoleDTO) (*roledtos.RoleDTO, error)
+	GetRoleByID(id uint) (*roledtos.RoleDTO, error)
+	ListRoles() ([]roledtos.RoleDTO, error)
 	DeleteRole(id uint) error
-	UpdateRole(id uint, roleDTO *dtos.RoleDTO) (*dtos.RoleDTO, error)
+	UpdateRole(id uint, roleDTO *roledtos.RoleDTO) (*roledtos.RoleDTO, error)
 }
 
 type RoleUseCase struct {
-	repo ports.IRoleRepository
+	repo roleports.IRoleRepository
 	log  logger.ILogger
 }
 
 // New crea una nueva instancia de RoleUseCase
-func New(repo ports.IRoleRepository) IRoleUseCase {
+func New(repo roleports.IRoleRepository) IRoleUseCase {
 	return &RoleUseCase{
 		repo: repo,
 		log:  logger.NewLogger(),

@@ -1,12 +1,12 @@
 package usecaserole
 
 import (
-	"auth/internal/domain/role/dtos"
+	"auth/internal/domain/role/roledtos"
 	"auth/internal/domain/role/roleerrors"
 	"fmt"
 )
 
-func (u *RoleUseCase) CreateRole(roleDTO *dtos.RoleDTO) (*dtos.RoleDTO, error) {
+func (u *RoleUseCase) CreateRole(roleDTO *roledtos.RoleDTO) (*roledtos.RoleDTO, error) {
 	if roleDTO.Name == "" {
 		return nil, roleerrors.ErrRoleNameEmpty
 	}

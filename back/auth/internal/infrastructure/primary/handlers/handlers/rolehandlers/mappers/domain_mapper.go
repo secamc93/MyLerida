@@ -1,12 +1,12 @@
 package mappers
 
 import (
-	"auth/internal/domain/role/dtos"
+	"auth/internal/domain/role/roledtos"
 	"auth/internal/infrastructure/primary/handlers/handlers/rolehandlers/dtos/response"
 )
 
 // MapRoleDTOToResponse convierte un DTO del dominio a un DTO de respuesta
-func MapRoleDTOToResponse(roleDTO *dtos.RoleDTO) *response.RoleResponse {
+func MapRoleDTOToResponse(roleDTO *roledtos.RoleDTO) *response.RoleResponse {
 	if roleDTO == nil {
 		return nil
 	}
@@ -39,7 +39,7 @@ func MapRoleDTOToResponse(roleDTO *dtos.RoleDTO) *response.RoleResponse {
 }
 
 // MapRoleDTOsToResponseList convierte una lista de DTOs del dominio a una respuesta de lista
-func MapRoleDTOsToResponseList(roleDTOs []dtos.RoleDTO) *response.RoleListResponse {
+func MapRoleDTOsToResponseList(roleDTOs []roledtos.RoleDTO) *response.RoleListResponse {
 	response := &response.RoleListResponse{
 		Roles: make([]response.RoleResponse, len(roleDTOs)),
 	}

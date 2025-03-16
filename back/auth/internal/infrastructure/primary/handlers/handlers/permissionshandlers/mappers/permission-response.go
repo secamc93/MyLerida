@@ -8,16 +8,14 @@ import (
 // MapToPermissionResponse mapea un PermissionDTO a un PermissionResponse
 func MapToPermissionResponse(dto *permissionsdtos.PermissionDTO) *response.PermissionResponse {
 	return &response.PermissionResponse{
-		BusinessesID:   dto.BusinessesID,
-		BusinessesName: dto.BusinessesName,
-		UserID:         dto.UserID,
-		UserName:       dto.UserName,
-		RoleID:         dto.RoleID,
-		Role:           dto.Role,
-		Write:          dto.Write,
-		Read:           dto.Read,
-		Delete:         dto.Delete,
-		Update:         dto.Update,
+		UserID:   dto.UserID,
+		UserName: dto.UserName,
+		RoleID:   dto.RoleID,
+		Role:     dto.Role,
+		Write:    dto.Write,
+		Read:     dto.Read,
+		Delete:   dto.Delete,
+		Update:   dto.Update,
 	}
 }
 

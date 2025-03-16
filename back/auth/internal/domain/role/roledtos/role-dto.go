@@ -1,4 +1,4 @@
-package dtos
+package roledtos
 
 type RoleDTO struct {
 	ID          uint

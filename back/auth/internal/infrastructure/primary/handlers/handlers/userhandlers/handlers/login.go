@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"auth/internal/domain/user/errors"
+	"auth/internal/domain/user/usererrors"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/request"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/dtos/response"
 	"auth/internal/infrastructure/primary/handlers/handlers/userhandlers/mappers"
@@ -20,9 +20,10 @@ import (
 // @Success 200 {object} response.LoginResponse
 // @Failure 400 {object} response.BaseResponse
 // @Failure 401 {object} response.BaseResponse
-// @Router /login [post]
+// @Router /users/login [post]
 func (h *UserHandler) Login(c *gin.Context) {
 	var req request.LoginRequest
+	ctx := c.Request.Context()
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, response.BaseResponse{
@@ -32,7 +33,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	loginRespDTO, err := h.useCase.Login(req.Email, req.Password)
+	loginRespDTO, err := h.useCase.Login(ctx, req.Email, req.Password)
 	if err != nil {
 		h.handleLoginError(c, err)
 		return
@@ -45,11 +46,11 @@ func (h *UserHandler) Login(c *gin.Context) {
 func (h *UserHandler) handleLoginError(c *gin.Context, err error) {
 	var statusCode int
 	switch err {
-	case errors.ErrUserNotFound:
+	case usererrors.ErrUserNotFound:
 		statusCode = http.StatusNotFound
-	case errors.ErrInvalidPassword:
+	case usererrors.ErrInvalidPassword:
 		statusCode = http.StatusUnauthorized
-	case errors.ErrJWTSecretNotSet:
+	case usererrors.ErrJWTSecretNotSet:
 		statusCode = http.StatusInternalServerError
 	default:
 		statusCode = http.StatusInternalServerError

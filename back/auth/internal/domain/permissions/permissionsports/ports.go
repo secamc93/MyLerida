@@ -5,7 +5,6 @@ import (
 )
 
 type IPermissionsRepository interface {
-	GetBusinessPermissions(business uint) (*[]permissionsdtos.PermissionDTO, error)
-	GetBusinessPermissionsByUser(business uint, user uint) (*[]permissionsdtos.PermissionDTO, error)
+	GetPermissionsByUser(user uint) (*[]permissionsdtos.PermissionDTO, error)
 	GetModules() ([]permissionsdtos.ModuleDTO, error)
 }
